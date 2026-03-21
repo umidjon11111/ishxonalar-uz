@@ -30,7 +30,7 @@ const advancedStyles = `
   .bento-card {
     background: var(--glass);
     border: 1px solid var(--border);
-    border-radius: 2.5rem;
+    border-radius: 2rem;
     transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
@@ -48,18 +48,17 @@ const advancedStyles = `
   .nav-link-custom:hover {
     opacity: 1;
     color: var(--ios-blue);
-    transform: translateY(-1px);
   }
 
   .ios-input-u {
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 1.5rem;
-    padding: 1.2rem 1.5rem;
+    border-radius: 1.2rem;
+    padding: 1rem 1.2rem;
     color: white;
     outline: none;
     width: 100%;
-    font-size: 15px;
+    font-size: 14px;
     transition: 0.3s;
   }
   .ios-input-u:focus { border-color: #007AFF; background: rgba(0, 122, 255, 0.08); }
@@ -78,16 +77,15 @@ const advancedStyles = `
       radial-gradient(circle at 15% 15%, rgba(0, 122, 255, 0.15) 0%, transparent 45%),
       radial-gradient(circle at 85% 85%, rgba(255, 59, 48, 0.1) 0%, transparent 45%);
   }
-
-  .blog-img-hover { transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
-  .bento-card:hover .blog-img-hover { transform: scale(1.08) rotate(1deg); }
-
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+  
+  @media (max-width: 768px) {
+    .bento-card { border-radius: 1.5rem; }
+  }
 `;
 
 export default function IshborUltimateMasterPlatform() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [authStep, setAuthStep] = useState<'login' | 'register' | 'profile'>('register');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -130,86 +128,118 @@ export default function IshborUltimateMasterPlatform() {
       <style dangerouslySetInnerHTML={{ __html: advancedStyles }} />
       <div className="mesh-bg" />
 
-      {/* --- 1. YANGILANGAN NAVBAR --- */}
-      <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-[1000] w-[92%] max-w-7xl">
+      {/* --- 1. YANGILANGAN NAVBAR (MOBILE OPTIMIZED) --- */}
+      <nav className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[1000] w-[95%] max-w-7xl">
         <motion.div 
           initial={{ y: -80, opacity: 0 }} 
           animate={{ y: 0, opacity: 1 }}
-          className="ios-26-blur px-8 py-5 flex justify-between items-center border border-white/10 rounded-[2.5rem] shadow-2xl"
+          className="ios-26-blur px-4 md:px-8 py-3 md:py-5 flex justify-between items-center border border-white/10 rounded-full md:rounded-[2.5rem] shadow-2xl"
         >
-          <Link href="/" className="text-2xl md:text-3xl font-black italic tracking-tighter hover:scale-105 transition-transform">
+          <Link href="/" className="text-xl md:text-3xl font-black italic tracking-tighter hover:scale-105 transition-transform">
             ISHBOR<span className="text-blue-500">.</span>
           </Link>
           
-          <div className="flex items-center gap-10">
+          <div className="flex items-center gap-4 md:gap-10">
+            {/* Desktop Menu */}
             <div className="hidden md:flex gap-10">
               <a href="#blog" className="nav-link-custom">Blog</a>
               <a href="#pricing" className="nav-link-custom">Pricing</a>
               <a href="https://t.me/mirfayz_roziyev" className="nav-link-custom">Hamkorlik</a>
             </div>
 
-            {isLoggedIn ? (
-              <motion.div 
-                whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                onClick={() => { setIsProfileOpen(true); setAuthStep('profile'); }}
-                className="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 p-[2px] cursor-pointer shadow-lg shadow-blue-500/20"
+            {/* User Profile / Join */}
+            <div className="flex items-center gap-3">
+              {isLoggedIn ? (
+                <motion.div 
+                  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                  onClick={() => { setIsProfileOpen(true); setAuthStep('profile'); }}
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 p-[2px] cursor-pointer"
+                >
+                  <div className="w-full h-full rounded-full bg-black flex items-center justify-center text-xs md:text-sm font-black italic">
+                    {user.name ? user.name.slice(0, 1).toUpperCase() : "U"}
+                  </div>
+                </motion.div>
+              ) : (
+                <button 
+                  onClick={() => { setIsProfileOpen(true); setAuthStep('register'); }}
+                  className="bg-white text-black px-4 md:px-8 py-2 md:py-3.5 rounded-full text-[10px] md:text-[12px] font-black uppercase tracking-wider transition-all"
+                >
+                  Join
+                </button>
+              )}
+              
+              {/* Mobile Menu Toggle */}
+              <button 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden w-10 h-10 flex items-center justify-center bg-white/5 rounded-full border border-white/10"
               >
-                <div className="w-full h-full rounded-full bg-black flex items-center justify-center text-sm font-black italic">
-                  {user.name ? user.name.slice(0, 1).toUpperCase() : "U"}
+                <div className="space-y-1">
+                  <div className={`w-5 h-0.5 bg-white transition-all ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
+                  <div className={`w-5 h-0.5 bg-white transition-all ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
+                  <div className={`w-5 h-0.5 bg-white transition-all ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
                 </div>
-              </motion.div>
-            ) : (
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => { setIsProfileOpen(true); setAuthStep('register'); }}
-                className="bg-white text-black px-8 py-3.5 rounded-full text-[12px] font-black uppercase tracking-wider hover:bg-blue-600 hover:text-white transition-all duration-500"
-              >
-                Join Now
-              </motion.button>
-            )}
+              </button>
+            </div>
           </div>
         </motion.div>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden mt-2 ios-26-blur border border-white/10 rounded-[2rem] overflow-hidden"
+            >
+              <div className="flex flex-col p-6 gap-6 text-center">
+                <a href="#blog" onClick={() => setIsMobileMenuOpen(false)} className="nav-link-custom !opacity-100 text-lg">Blog</a>
+                <a href="#pricing" onClick={() => setIsMobileMenuOpen(false)} className="nav-link-custom !opacity-100 text-lg">Pricing</a>
+                <a href="https://t.me/mirfayz_roziyev" className="nav-link-custom !opacity-100 text-lg text-blue-500">Hamkorlik</a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* --- 2. HERO --- */}
-      <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="h-screen flex flex-col justify-center items-center text-center px-4">
-        <h1 className="text-[18vw] md:text-[10vw] font-black italic tracking-tighter leading-[0.85] text-ethereal mb-14 uppercase">
+      <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="h-screen flex flex-col justify-center items-center text-center px-6 pt-20">
+        <h1 className="text-[15vw] md:text-[10vw] font-black italic tracking-tighter leading-[0.9] text-ethereal mb-8 md:mb-14 uppercase">
           Imkon <br /> <span className="text-blue-600">Sizda.</span>
         </h1>
-        <div className="flex flex-col sm:flex-row gap-6">
-          <button className="bg-blue-600 px-14 py-6 rounded-full font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-500/30 hover:scale-105 transition-all">
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <button className="bg-blue-600 px-10 py-5 md:px-14 md:py-6 rounded-full font-black text-[11px] md:text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-500/30">
             <Link href="/online2">Vakansiyalar</Link> 
           </button>
-          <button className="bg-white/5 border border-white/10 px-14 py-6 rounded-full font-black text-[12px] uppercase tracking-widest backdrop-blur-xl hover:bg-white/10 transition-all">
+          <button className="bg-white/5 border border-white/10 px-10 py-5 md:px-14 md:py-6 rounded-full font-black text-[11px] md:text-[12px] uppercase tracking-widest backdrop-blur-xl">
             <a href="https://t.me/mirfayz_roziyev">Bog'lanish</a>
           </button>
         </div>
       </motion.section>
 
       {/* --- 3. STATS --- */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 py-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {[{ v: "1.5k+", l: "A'zolar" }, { v: "400+", l: "Kompaniyalar" }, { v: "24/7", l: "Support" }, { v: "99%", l: "Ishonch" }].map((s, i) => (
-            <div key={i} className="bento-card p-12 text-center bg-white/[0.01] hover:bg-white/[0.03]">
-              <div className="text-4xl font-black italic mb-3 tracking-tighter">{s.v}</div>
-              <div className="text-[10px] font-black uppercase opacity-30 tracking-[0.2em]">{s.l}</div>
+            <div key={i} className="bento-card p-6 md:p-12 text-center">
+              <div className="text-2xl md:text-4xl font-black italic mb-2 tracking-tighter">{s.v}</div>
+              <div className="text-[8px] md:text-[10px] font-black uppercase opacity-30 tracking-[0.2em]">{s.l}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* --- 4. BLOG --- */}
-      <section id="blog" className="max-w-7xl mx-auto px-6 py-40 border-t border-white/5">
-        <h2 className="text-6xl font-black italic uppercase tracking-tighter mb-20">Oxirgi Maqolalar</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <section id="blog" className="max-w-7xl mx-auto px-4 md:px-6 py-20 md:py-40 border-t border-white/5">
+        <h2 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter mb-12 md:20 text-center md:text-left">Maqolalar</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
           {blogPosts.map((post) => (
-            <div key={post.id} className="bento-card group cursor-pointer overflow-hidden">
-              <div className="h-72 overflow-hidden">
-                <img src={post.img} className="w-full h-full object-cover blog-img-hover" alt={post.title} />
+            <div key={post.id} className="bento-card group cursor-pointer">
+              <div className="h-48 md:h-72 overflow-hidden">
+                <img src={post.img} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt={post.title} />
               </div>
-              <div className="p-12">
-                <h3 className="text-2xl font-black italic uppercase group-hover:text-blue-500 transition-all leading-tight">{post.title}</h3>
+              <div className="p-6 md:p-12">
+                <h3 className="text-xl md:text-2xl font-black italic uppercase group-hover:text-blue-500 transition-all">{post.title}</h3>
               </div>
             </div>
           ))}
@@ -217,75 +247,63 @@ export default function IshborUltimateMasterPlatform() {
       </section>
 
       {/* --- 5. PRICING --- */}
-      <section id="pricing" className="max-w-7xl mx-auto px-6 py-40 border-t border-white/5">
-        <div className="text-center mb-20">
-          <h2 className="text-6xl md:text-8xl font-black italic uppercase mb-10 tracking-tighter">Obuna</h2>
-          <div className="inline-flex p-2 bg-white/5 rounded-full border border-white/10 backdrop-blur-md">
-            <button onClick={() => setBillingCycle('monthly')} className={`px-10 py-4 rounded-full text-[10px] font-black uppercase transition-all ${billingCycle === 'monthly' ? 'bg-blue-600 shadow-xl' : 'opacity-40 hover:opacity-100'}`}>Oylik</button>
-            <button onClick={() => setBillingCycle('yearly')} className={`px-10 py-4 rounded-full text-[10px] font-black uppercase transition-all ${billingCycle === 'yearly' ? 'bg-blue-600 shadow-xl' : 'opacity-40 hover:opacity-100'}`}>Yillik</button>
+      <section id="pricing" className="max-w-7xl mx-auto px-4 md:px-6 py-20 md:py-40 border-t border-white/5">
+        <div className="text-center mb-12 md:mb-20">
+          <h2 className="text-5xl md:text-8xl font-black italic uppercase mb-8 tracking-tighter">Obuna</h2>
+          <div className="inline-flex p-1.5 bg-white/5 rounded-full border border-white/10">
+            <button onClick={() => setBillingCycle('monthly')} className={`px-6 md:px-10 py-3 md:py-4 rounded-full text-[9px] md:text-[10px] font-black uppercase transition-all ${billingCycle === 'monthly' ? 'bg-blue-600' : 'opacity-40'}`}>Oylik</button>
+            <button onClick={() => setBillingCycle('yearly')} className={`px-6 md:px-10 py-3 md:py-4 rounded-full text-[9px] md:text-[10px] font-black uppercase transition-all ${billingCycle === 'yearly' ? 'bg-blue-600' : 'opacity-40'}`}>Yillik</button>
           </div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {plans.map((plan) => (
-            <div key={plan.id} className={`bento-card p-12 flex flex-col justify-between min-h-[620px] ${plan.popular ? 'border-blue-500/50 shadow-[0_0_50px_rgba(0,122,255,0.15)] scale-105 z-10' : ''}`}>
+            <div key={plan.id} className={`bento-card p-8 md:p-12 flex flex-col justify-between min-h-[500px] md:min-h-[620px] ${plan.popular ? 'border-blue-500/50 shadow-2xl scale-100 lg:scale-105' : ''}`}>
               <div>
-                <span className="text-[10px] font-black opacity-30 uppercase tracking-[0.4em] mb-12 block">{plan.name}</span>
-                <div className="text-7xl font-black italic tracking-tighter mb-4">{billingCycle === 'monthly' ? plan.monthly : plan.yearly}</div>
-                <p className="text-[10px] font-bold opacity-30 uppercase mb-12">UZS / {billingCycle === 'monthly' ? 'Oy' : 'Yil'}</p>
-                <ul className="space-y-5 opacity-80 text-[13px] font-bold italic">
-                  {plan.features.map((f, i) => <li key={i} className="flex items-center gap-4"><div className="w-2 h-2 rounded-full bg-blue-500" /> {f}</li>)}
+                <span className="text-[9px] font-black opacity-30 uppercase tracking-[0.4em] mb-8 md:mb-12 block">{plan.name}</span>
+                <div className="text-5xl md:text-7xl font-black italic tracking-tighter mb-2">{billingCycle === 'monthly' ? plan.monthly : plan.yearly}</div>
+                <p className="text-[9px] font-bold opacity-30 uppercase mb-8 md:mb-12">UZS / {billingCycle === 'monthly' ? 'Oy' : 'Yil'}</p>
+                <ul className="space-y-4 opacity-80 text-[12px] md:text-[13px] font-bold italic">
+                  {plan.features.map((f, i) => <li key={i} className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-blue-500" /> {f}</li>)}
                 </ul>
               </div>
-              <button onClick={() => setIsPaymentOpen(true)} className="w-full py-6 rounded-2xl font-black text-[11px] uppercase bg-blue-600 mt-12 hover:shadow-2xl hover:brightness-110 transition-all">Tanlash</button>
+              <button onClick={() => setIsPaymentOpen(true)} className="w-full py-5 md:py-6 rounded-2xl font-black text-[10px] md:text-[11px] uppercase bg-blue-600 mt-10 hover:brightness-110 transition-all">Tanlash</button>
             </div>
           ))}
         </div>
       </section>
 
-      {/* --- MODALS --- */}
+      {/* --- MODALS (MOBILE FRIENDLY) --- */}
       <AnimatePresence>
         {isProfileOpen && (
           <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsProfileOpen(false)} className="absolute inset-0 bg-black/90 backdrop-blur-2xl" />
-            <motion.div initial={{ scale: 0.9, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 20, opacity: 0 }} className="bento-card w-full max-w-md p-12 relative border-white/20 z-20 shadow-2xl">
-              <button onClick={() => setIsProfileOpen(false)} className="absolute top-8 right-8 text-xl opacity-40 hover:opacity-100">✕</button>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsProfileOpen(false)} className="absolute inset-0 bg-black/95 backdrop-blur-2xl" />
+            <motion.div initial={{ scale: 0.9, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 20, opacity: 0 }} className="bento-card w-full max-w-sm p-8 md:p-12 relative z-20 shadow-2xl border-white/20">
+              <button onClick={() => setIsProfileOpen(false)} className="absolute top-6 right-6 text-lg opacity-40">✕</button>
 
               {authStep === 'register' && (
-                <div className="space-y-10">
-                  <h3 className="text-4xl font-black italic uppercase text-center tracking-tighter">Join Ishbor</h3>
-                  <form onSubmit={handleAuthSubmit} className="space-y-5">
-                    <input type="text" placeholder="TO'LIQ ISM" className="ios-input-u uppercase font-black" required onChange={(e) => setUser({...user, name: e.target.value})} />
-                    <input type="email" placeholder="EMAIL" className="ios-input-u font-black" required onChange={(e) => setUser({...user, email: e.target.value})} />
-                    <input type="password" placeholder="PASSWORD" className="ios-input-u font-black" required />
-                    <button type="submit" className="w-full bg-blue-600 py-6 rounded-3xl font-black text-[11px] uppercase mt-6 shadow-xl shadow-blue-500/20">Hisob yaratish</button>
-                  </form>
-                  <p className="text-center text-[10px] font-bold opacity-40 uppercase">Oldin kirganmisiz? <button onClick={() => setAuthStep('login')} className="text-blue-500 ml-2">Kirish</button></p>
-                </div>
-              )}
-
-              {authStep === 'login' && (
-                <div className="space-y-10">
-                  <h3 className="text-4xl font-black italic uppercase text-center tracking-tighter">Xush kelibsiz</h3>
-                  <form onSubmit={handleAuthSubmit} className="space-y-5">
+                <div className="space-y-8">
+                  <h3 className="text-3xl font-black italic uppercase text-center tracking-tighter">Join Ishbor</h3>
+                  <form onSubmit={handleAuthSubmit} className="space-y-4">
+                    <input type="text" placeholder="ISMINGIZ" className="ios-input-u uppercase font-black" required onChange={(e) => setUser({...user, name: e.target.value})} />
                     <input type="email" placeholder="EMAIL" className="ios-input-u font-black" required />
                     <input type="password" placeholder="PASSWORD" className="ios-input-u font-black" required />
-                    <button type="submit" className="w-full bg-blue-600 py-6 rounded-3xl font-black text-[11px] uppercase mt-6 shadow-xl shadow-blue-500/20">Tizimga kirish</button>
+                    <button type="submit" className="w-full bg-blue-600 py-5 rounded-2xl font-black text-[10px] uppercase mt-4">Ro'yxatdan o'tish</button>
                   </form>
-                  <p className="text-center text-[10px] font-bold opacity-40 uppercase">Yangimisiz? <button onClick={() => setAuthStep('register')} className="text-blue-500 ml-2">Ro'yxatdan o'tish</button></p>
+                  <p className="text-center text-[9px] font-bold opacity-40 uppercase">A'zomisiz? <button onClick={() => setAuthStep('login')} className="text-blue-500 ml-1">Kirish</button></p>
                 </div>
               )}
 
               {authStep === 'profile' && (
-                <div className="space-y-10 text-center">
-                  <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 p-[3px] mx-auto shadow-2xl">
-                    <div className="w-full h-full rounded-full bg-black flex items-center justify-center text-4xl font-black italic uppercase">
-                      {user.name ? user.name.slice(0, 1) : "U"}
+                <div className="space-y-8 text-center">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 p-[2px] mx-auto shadow-xl">
+                    <div className="w-full h-full rounded-full bg-black flex items-center justify-center text-3xl font-black italic">
+                      {user.name ? user.name.slice(0, 1).toUpperCase() : "U"}
                     </div>
                   </div>
-                  <h3 className="text-3xl font-black italic uppercase tracking-tighter">{user.name || "Foydalanuvchi"}</h3>
-                  <div className="space-y-4 pt-6">
-                    <button className="w-full bg-white/5 border border-white/10 py-5 rounded-2xl text-[10px] font-black uppercase hover:bg-white/10 transition-all">Profil sozlamalari</button>
-                    <button onClick={handleLogout} className="w-full bg-red-500/10 border border-red-500/20 py-5 rounded-2xl text-[10px] font-black uppercase text-red-500 hover:bg-red-500/20 transition-all">Chiqish</button>
+                  <h3 className="text-2xl font-black italic uppercase tracking-tighter">{user.name || "User"}</h3>
+                  <div className="space-y-3 pt-4">
+                    <button className="w-full bg-white/5 border border-white/10 py-4 rounded-xl text-[9px] font-black uppercase">Sozlamalar</button>
+                    <button onClick={handleLogout} className="w-full bg-red-500/10 border border-red-500/20 py-4 rounded-xl text-[9px] font-black uppercase text-red-500">Chiqish</button>
                   </div>
                 </div>
               )}
@@ -295,24 +313,24 @@ export default function IshborUltimateMasterPlatform() {
 
         {isPaymentOpen && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsPaymentOpen(false)} className="absolute inset-0 bg-black/90 backdrop-blur-2xl" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bento-card w-full max-w-md p-12 relative z-20 border-white/20 shadow-2xl">
-              <button onClick={() => setIsPaymentOpen(false)} className="absolute top-8 right-8 text-xl opacity-40">✕</button>
-              <h3 className="text-4xl font-black italic uppercase text-center mb-12 tracking-tighter">To'lov</h3>
-              <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); alert("To'lov muvaffaqiyatli!"); setIsPaymentOpen(false); }}>
-                <input type="text" placeholder="KARTA RAQAMI" className="ios-input-u text-center tracking-[0.3em] font-black" maxLength={16} required />
-                <div className="grid grid-cols-2 gap-5">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsPaymentOpen(false)} className="absolute inset-0 bg-black/95 backdrop-blur-2xl" />
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bento-card w-full max-w-sm p-8 md:p-12 relative z-20 border-white/20 shadow-2xl">
+              <button onClick={() => setIsPaymentOpen(false)} className="absolute top-6 right-6 text-lg opacity-40">✕</button>
+              <h3 className="text-3xl font-black italic uppercase text-center mb-10 tracking-tighter">To'lov</h3>
+              <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); alert("To'lov muvaffaqiyatli!"); setIsPaymentOpen(false); }}>
+                <input type="text" placeholder="KARTA RAQAMI" className="ios-input-u text-center tracking-widest font-black" maxLength={16} required />
+                <div className="grid grid-cols-2 gap-4">
                   <input type="text" placeholder="MM/YY" className="ios-input-u text-center font-black" maxLength={5} required />
                   <input type="text" placeholder="CVV" className="ios-input-u text-center font-black" maxLength={3} required />
                 </div>
-                <button className="w-full bg-blue-600 py-7 rounded-[2rem] font-black text-[12px] uppercase tracking-widest mt-8 shadow-2xl shadow-blue-500/40 hover:brightness-110 transition-all">Tasdiqlash</button>
+                <button className="w-full bg-blue-600 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest mt-6 shadow-xl shadow-blue-500/40 hover:brightness-110 transition-all">Tasdiqlash</button>
               </form>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
 
-      <footer className="py-32 text-center opacity-30 text-[11px] font-black tracking-[0.5em] uppercase">
+      <footer className="py-20 text-center opacity-20 text-[9px] font-black tracking-[0.4em] uppercase">
         ISHBOR GLOBAL SYSTEMS • 2026
       </footer>
     </div>
